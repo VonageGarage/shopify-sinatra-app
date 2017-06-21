@@ -19,7 +19,7 @@ module Sinatra
       end
 
       def logout
-        session.delete(:shopify)
+        session[:shopify] = nil
       end
 
       def base_url
@@ -40,8 +40,9 @@ module Sinatra
       end
 
       def shopify_session(&blk)
+        puts "here for shopify session"
         return_to = request.env['sinatra.route'].split(' ').last
-
+       puts "session #{session} key: #{session.key?(:shopify)}"
         if !session.key?(:shopify)
           authenticate(return_to)
         elsif params[:shop].present? && session[:shopify][:shop] != sanitize_shop_param(params)
@@ -101,6 +102,7 @@ module Sinatra
       end
 
       def clear_session(shop)
+        puts "clearing session~~~~~~~~~~~~"
         logout
         shop.token = nil
         shop.save
